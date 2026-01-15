@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="description" content="App de conteo regresivo para múltiples eventos." />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <title>CuentaRegresiva Pro</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">⏳</div>
+      <div>
+        <div class="title">CuentaRegresiva Pro</div>
+        <div class="subtitle">Múltiples eventos • alertas • prioridades</div>
+      </div>
+    </div>
+    <button id="btnAdd" class="btn primary">+ Nuevo</button>
+  </header>
+
+  <main class="container">
+    <section class="controls">
+      <div class="field">
+        <label for="search">Buscar</label>
+        <input id="search" type="search" placeholder="Nombre, categoría…" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label for="sort">Ordenar</label>
+        <select id="sort">
+          <option value="soon">Más próximo</option>
+          <option value="priority">Prioridad</option>
+          <option value="name">Nombre</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="filter">Filtrar</label>
+        <select id="filter">
+          <option value="all">Todos</option>
+          <option value="active">Activos</option>
+          <option value="expired">Vencidos</option>
+        </select>
+      </div>
+    </section>
+
+    <section id="empty" class="empty" hidden>
+      <h2>No tienes eventos aún</h2>
+      <p>Crea tu primer evento y la app mostrará el conteo regresivo automáticamente.</p>
+      <button class="btn primary" id="btnAddEmpty">Crear evento</button>
+      <div class="hint">Tip: cuando la alojes en HTTPS podrás activar notificaciones.</div>
+    </section>
+
+    <section id="list" class="cards" aria-live="polite"></section>
+  </main>
+
+  <!-- Modal: Add/Edit -->
+  <dialog id="modal" class="modal">
+    <form method="dialog" id="form" class="card">
+      <div class="cardHeader">
+        <div>
+          <h3 id="modalTitle">Nuevo evento</h3>
+          <p class="muted" id="modalHint">Configura fecha y alertas opcionales.</p>
+        </div>
+        <button type="button" class="iconBtn" id="btnClose" aria-label="Cerrar">✕</button>
+      </div>
+
+      <div class="grid">
+        <div class="field span2">
+          <label for="name">Nombre</label>
+          <input id="name" required maxlength="60" placeholder="Ej: Cierre Tramo 1" />
+        </div>
+
+        <div class="field">
+          <label for="category">Categoría</label>
+          <select id="category">
+            <option>Proyecto</option>
+            <option>Contrato</option>
+            <option>Evento</option>
+            <option>Académico</option>
+            <option>Personal</option>
+            <option>Otro</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="priority">Prioridad</label>
+          <select id="priority">
+            <option value="alta">Alta</option>
+            <option value="media" selected>Media</option>
+            <option value="baja">Baja</option>
+          </select>
+        </div>
+
+        <div class="field span2">
+          <label for="end">Fecha y hora de finalización</label>
+          <input id="end" type="datetime-local" required />
+          <div class="micro">Usa tu hora local.</div>
+        </div>
+
+        <div class="field span2">
+          <label for="notes">Descripción (opcional)</label>
+          <textarea id="notes" rows="3" maxlength="280" placeholder="Notas rápidas, responsables, enlace, etc."></textarea>
+        </div>
+      </div>
+
+      <div class="alerts">
+        <div class="row">
+          <div>
+            <div class="label">Alertas (opcional)</div>
+            <div class="muted">Cuando se acerque el vencimiento, la app puede notificarte (requiere HTTPS para notificaciones web).</div>
+          </div>
+          <button type="button" id="btnEnableNotifications" class="btn">Activar notificaciones</button>
+        </div>
+        <div class="chips" id="alertChips">
+          <label class="chip"><input type="checkbox" value="10080" />7 días</label>
+          <label class="chip"><input type="checkbox" value="1440" />24 h</label>
+          <label class="chip"><input type="checkbox" value="120" />2 h</label>
+          <label class="chip"><input type="checkbox" value="30" />30 min</label>
+        </div>
+      </div>
+
+      <div class="actions">
+        <div class="left">
+          <button type="button" id="btnDelete" class="btn danger" hidden>Eliminar</button>
+        </div>
+        <div class="right">
+          <button type="button" class="btn" id="btnCancel">Cancelar</button>
+          <button type="submit" class="btn primary" id="btnSave">Guardar</button>
+        </div>
+      </div>
+
+      <input type="hidden" id="editId" />
+    </form>
+  </dialog>
+
+  <template id="tplItem">
+  <article class="card">
+    <div class="cardHead">
+      <div>
+        <h3 class="cardTitle" data-title></h3>
+        <div class="badges">
+          <span class="badge" data-badge></span>
+          <span class="badge" data-cat></span>
+        </div>
+      </div>
+      <button class="btn ghost" type="button" data-dup title="Duplicar">⧉</button>
+    </div>
+
+    <div class="timer" data-timer></div>
+
+    <div class="small" data-notes></div>
+
+    <div class="meta">
+      <span data-pri></span>
+      <span data-end></span>
+    </div>
+
+    <div class="actions">
+      <button class="btn" type="button" data-edit>Editar</button>
+      <button class="btn" type="button" data-del>Eliminar</button>
+    </div>
+  </article>
+</template>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

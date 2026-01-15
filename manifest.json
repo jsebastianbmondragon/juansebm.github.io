@@ -1,0 +1,21 @@
+{
+  "name": "CuentaRegresiva Pro",
+  "short_name": "CuentaRegresiva",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b1220",
+  "theme_color": "#0f172a",
+  "description": "Conteo regresivo para múltiples eventos con alertas y prioridades.",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
